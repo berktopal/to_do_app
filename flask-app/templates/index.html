@@ -93,6 +93,10 @@ async function loadTasks(filter = "") {
     const list = document.getElementById("task-list");
     list.innerHTML = "";
 
+    // Kullanıcı girdisini HTML'e basmadan önce kaçışla (XSS önlemi)
+    const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, c =>
+        ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+
     let completedCounter = 0;
 
     tasks.forEach(task => {
@@ -112,11 +116,11 @@ async function loadTasks(filter = "") {
                 <span
                     class="task-title"
                     style="${task.completed ? "text-decoration: line-through;" : ""}">
-                    ${task.title}
+                    ${escapeHtml(task.title)}
                 </span>
 
                 <span class="badge bg-secondary ms-2">
-                    ${task.priority}
+                    ${escapeHtml(task.priority)}
                 </span>
             </div>
 
